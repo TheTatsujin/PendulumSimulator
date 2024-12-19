@@ -25,9 +25,10 @@ public class PendulumPresenter {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                simulator.nextFrame();
                 canvas.clear();
+                simulator.nextFrame();
                 addCircles();
+                canvas.update();
             }
         }, 0, (long) (Simulator.dt * 1000));
     }

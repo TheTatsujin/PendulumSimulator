@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Simulator implements Iterable<Pendulum>{
-    private final List<Pendulum> pendulums;
+    private List<Pendulum> pendulums;
     public static final double dt = 0.001;
+    public static final double damping = 1;
+
 
     public Simulator() {
         this.pendulums = new ArrayList<>();
@@ -18,12 +20,17 @@ public class Simulator implements Iterable<Pendulum>{
     }
 
     public void nextFrame() {
-        pendulums.forEach(g -> g = nextState(g));
+        pendulums = pendulums.stream()
+                .map(this::nextState)
+                .toList();
     }
 
     private Pendulum nextState(Pendulum pendulum) {
-        double speed = pendulum.speed() + getAngularAcceleration(pendulum) * dt;
-        return new Pendulum(pendulum.hangingCord(), pendulum.theta() + speed * dt, speed, pendulum.g());
+        double newOmega = pendulum.omega() + getAngularAcceleration(pendulum) * dt * damping;
+
+        double newTheta = pendulum.theta() + newOmega * dt;
+
+        return new Pendulum(pendulum.hangingCord(), newTheta, newOmega, pendulum.g());
     }
 
     private static double getAngularAcceleration(Pendulum pendulum) {

@@ -17,6 +17,7 @@ public class SwingCanvas extends JPanel implements Canvas {
 
     @Override
     public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         circleList.forEach(c -> drawCircle(g, c));
     }
 
@@ -29,6 +30,11 @@ public class SwingCanvas extends JPanel implements Canvas {
     public Canvas clear() {
         this.circleList.clear();
         return this;
+    }
+
+    @Override
+    public void update() {
+        this.repaint();
     }
 
     private void drawCircle(Graphics g, Circle circle) {
