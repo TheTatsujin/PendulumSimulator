@@ -10,10 +10,11 @@ public class Main {
     public static void main(String[] args) {
         Simulator simulator = new Simulator();
         simulator.add(new Pendulum(
-                new Rope(50,50, 100),
+                new Rope(0,0, 350),
                 Math.PI / 2,
                 0,
-                100.8
+                50.8,
+                85
         ));
         SwingCanvas canvas = new SwingCanvas();
 
@@ -21,6 +22,5 @@ public class Main {
         MainFrame mainFrame = new MainFrame(canvas);
         presenter.runSimulation();
         mainFrame.setVisible(true);
-
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 public class Simulator implements Iterable<Pendulum>{
     private List<Pendulum> pendulums;
     public static final double dt = 0.001;
-    public static final double damping = 1;
+    public static final double damping = 20;
 
 
     public Simulator() {
@@ -30,7 +30,7 @@ public class Simulator implements Iterable<Pendulum>{
 
         double newTheta = pendulum.theta() + newOmega * dt;
 
-        return new Pendulum(pendulum.hangingCord(), newTheta, newOmega, pendulum.g());
+        return new Pendulum(pendulum.hangingCord(), newTheta, newOmega, pendulum.g(), pendulum.radius());
     }
 
     private static double getAngularAcceleration(Pendulum pendulum) {

@@ -14,22 +14,22 @@ public class CanvasAdapter {
     }
 
     public Circle pendulumToCircle(Pendulum pendulum) {
-        System.out.println("pendulum: (" + calculateComponentX(pendulum) + ", " + calculateComponentY(pendulum) + ")");
-        System.out.println("Theta: " + pendulum.theta());
         return new Circle(
-                adaptCoordinateX(calculateComponentX(pendulum)),
-                adaptCoordinateY(calculateComponentY(pendulum)),
-                50,
-                Color.PINK
+                adaptCoordinateX(calculateComponentX(pendulum), pendulum.radius()),
+                adaptCoordinateY(calculateComponentY(pendulum), pendulum.radius()),
+                pendulum.radius(),
+                Color.PINK,
+                adaptCoordinateX(pendulum.hangingCord().x(), 0),
+                adaptCoordinateY(pendulum.hangingCord().y(), 0)
         );
     }
 
-    private int adaptCoordinateX(int x){
-        return canvas.width() / 2 + x;
+    private int adaptCoordinateX(int x, int radius){
+        return  (canvas.width() / 2) + x - radius / 4;
     }
 
-    private int adaptCoordinateY(int y){
-        return canvas.height() / 2 + y;
+    private int adaptCoordinateY(int y, int radius){
+        return canvas.height() / 20 + y - radius / 4;
     }
 
     private int calculateComponentX(Pendulum pendulum) {
