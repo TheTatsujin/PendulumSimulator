@@ -1,7 +1,6 @@
 package software.ulpgc.simulation.swingApp;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class MainFrame extends JFrame {
     public MainFrame(SwingCanvas canvas) {

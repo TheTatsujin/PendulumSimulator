@@ -10,12 +10,23 @@ public class Main {
     public static void main(String[] args) {
         Simulator simulator = new Simulator();
         simulator.add(new Pendulum(
+                2,
                 new Rope(0,0, 350),
-                Math.PI / 2,
+                0,
                 0,
                 50.8,
                 85
         ));
+
+        simulator.add(new Pendulum(
+                3,
+                new Rope(20, 20, 100),
+                0,
+                0,
+                50.8,
+                80
+        ));
+
         SwingCanvas canvas = new SwingCanvas();
 
         PendulumPresenter presenter = new PendulumPresenter(simulator, canvas);

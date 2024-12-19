@@ -5,13 +5,23 @@ import software.ulpgc.simulation.core.view.Canvas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SwingCanvas extends JPanel implements Canvas {
     private final List<Circle> circleList;
+    private Drag drag = Drag.Null;
+    private Release release = Release.Null;
+    private Press press = Press.Null;
+    private int initialOffsetX;
+    private int initialOffsetY;
 
     public SwingCanvas() {
+        this.addMouseListener(mouseListener());
+        this.addMouseMotionListener(mouseMotionListener());
         circleList = new ArrayList<>();
     }
 
@@ -43,6 +53,14 @@ public class SwingCanvas extends JPanel implements Canvas {
     }
 
     @Override
+    public Canvas removeCircle(int id) {
+        synchronized (circleList) {
+            circleList.removeIf(circle -> circle.id() == id);
+        }
+        return this;
+    }
+
+    @Override
     public int width() {
         return this.getWidth();
     }
@@ -55,6 +73,21 @@ public class SwingCanvas extends JPanel implements Canvas {
     @Override
     public void update() {
         this.repaint();
+    }
+
+    @Override
+    public void on(Drag event) {
+        this.drag = event != null ? event : Drag.Null;
+    }
+
+    @Override
+    public void on(Release event) {
+        this.release = event != null ? event : Release.Null;
+    }
+
+    @Override
+    public void on(Press event) {
+        this.press = event != null ? event : Press.Null;
     }
 
 
@@ -77,5 +110,55 @@ public class SwingCanvas extends JPanel implements Canvas {
                 circle.y() + circle.radius()/4
         );
 
+    }
+
+    private MouseListener mouseListener(){
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialOffsetX = e.getX();
+                initialOffsetY = e.getY();
+                press.offset(initialOffsetX, initialOffsetY);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                release.offset(
+                        e.getX() - initialOffsetX,
+                        e.getY() - initialOffsetY
+                );
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        };
+    }
+
+    private MouseMotionListener mouseMotionListener(){
+        return new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                drag.offset(
+                        e.getX() - initialOffsetX,
+                        e.getY() - initialOffsetY
+                );
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+
+            }
+        };
     }
 }

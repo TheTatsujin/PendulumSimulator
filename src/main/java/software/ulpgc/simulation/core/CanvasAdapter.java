@@ -15,6 +15,7 @@ public class CanvasAdapter {
 
     public Circle pendulumToCircle(Pendulum pendulum) {
         return new Circle(
+                pendulum.id(),
                 adaptCoordinateX(calculateComponentX(pendulum), pendulum.radius()),
                 adaptCoordinateY(calculateComponentY(pendulum), pendulum.radius()),
                 pendulum.radius(),
@@ -23,7 +24,6 @@ public class CanvasAdapter {
                 adaptCoordinateY(pendulum.hangingCord().y(), 0)
         );
     }
-
     private int adaptCoordinateX(int x, int radius){
         return  (canvas.width() / 2) + x - radius / 4;
     }
@@ -39,4 +39,20 @@ public class CanvasAdapter {
     private int calculateComponentY(Pendulum pendulum) {
         return (int) (Math.cos(pendulum.theta()) * pendulum.hangingCord().length());
     }
+
+
+    public Pendulum movePendulumTo(Pendulum pendulum, int x, int y) {
+        return new Pendulum(
+                pendulum.id(),
+                pendulum.hangingCord(),
+                Math.atan2(x, y),
+                0,
+                pendulum.g(),
+                pendulum.radius()
+        );
+    }
+
+
+
+
 }
