@@ -1,7 +1,7 @@
 package software.ulpgc.simulation.swingApp;
 
-import software.ulpgc.simulation.core.view.Canvas;
 import software.ulpgc.simulation.core.view.Circle;
+import software.ulpgc.simulation.core.view.Canvas;
 
 import javax.swing.*;
 import java.awt.Graphics;
@@ -27,9 +27,19 @@ public class SwingCanvas extends JPanel implements Canvas {
     }
 
     @Override
-    public Canvas clear() {
+    public software.ulpgc.simulation.core.view.Canvas clear() {
         this.circleList.clear();
         return this;
+    }
+
+    @Override
+    public int width() {
+        return this.getWidth();
+    }
+
+    @Override
+    public int height() {
+        return this.getHeight();
     }
 
     @Override

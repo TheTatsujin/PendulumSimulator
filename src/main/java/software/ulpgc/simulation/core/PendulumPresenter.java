@@ -3,7 +3,6 @@ package software.ulpgc.simulation.core;
 import software.ulpgc.simulation.core.model.Pendulum;
 import software.ulpgc.simulation.core.model.Simulator;
 import software.ulpgc.simulation.core.view.Canvas;
-import software.ulpgc.simulation.core.view.CanvasAdapter;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,8 +13,8 @@ public class PendulumPresenter {
     private final Canvas canvas;
 
 
-    public PendulumPresenter(CanvasAdapter adapter, Simulator simulator, Canvas canvas) {
-        this.adapter = adapter;
+    public PendulumPresenter(Simulator simulator, Canvas canvas) {
+        this.adapter = new CanvasAdapter(canvas);
         this.simulator = simulator;
         this.canvas = canvas;
     }
@@ -38,7 +37,5 @@ public class PendulumPresenter {
             canvas.addCircle(adapter.pendulumToCircle(pendulum));
         }
     }
-
-
 
 }

@@ -1,19 +1,18 @@
-package software.ulpgc.simulation.swingApp;
+package software.ulpgc.simulation.core;
 
 import software.ulpgc.simulation.core.model.Pendulum;
-import software.ulpgc.simulation.core.view.CanvasAdapter;
 import software.ulpgc.simulation.core.view.Circle;
+import software.ulpgc.simulation.core.view.Canvas;
 
 import java.awt.*;
 
-public class SwingCanvasAdapter implements CanvasAdapter {
-    private final SwingCanvas swingCanvas;
+public class CanvasAdapter {
+    private final Canvas canvas;
 
-    public SwingCanvasAdapter(SwingCanvas swingCanvas) {
-        this.swingCanvas = swingCanvas;
+    public CanvasAdapter(Canvas canvas) {
+        this.canvas = canvas;
     }
 
-    @Override
     public Circle pendulumToCircle(Pendulum pendulum) {
         System.out.println("pendulum: (" + calculateComponentX(pendulum) + ", " + calculateComponentY(pendulum) + ")");
         System.out.println("Theta: " + pendulum.theta());
@@ -26,11 +25,11 @@ public class SwingCanvasAdapter implements CanvasAdapter {
     }
 
     private int adaptCoordinateX(int x){
-        return swingCanvas.getWidth() / 2 + x;
+        return canvas.width() / 2 + x;
     }
 
     private int adaptCoordinateY(int y){
-        return swingCanvas.getHeight() / 2 + y;
+        return canvas.height() / 2 + y;
     }
 
     private int calculateComponentX(Pendulum pendulum) {

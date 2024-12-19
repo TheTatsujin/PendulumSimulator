@@ -4,7 +4,6 @@ import software.ulpgc.simulation.core.PendulumPresenter;
 import software.ulpgc.simulation.core.model.Pendulum;
 import software.ulpgc.simulation.core.model.Rope;
 import software.ulpgc.simulation.core.model.Simulator;
-import software.ulpgc.simulation.core.view.CanvasAdapter;
 
 
 public class Main {
@@ -17,9 +16,8 @@ public class Main {
                 100.8
         ));
         SwingCanvas canvas = new SwingCanvas();
-        CanvasAdapter adapter = new SwingCanvasAdapter(canvas);
 
-        PendulumPresenter presenter = new PendulumPresenter(adapter, simulator, canvas);
+        PendulumPresenter presenter = new PendulumPresenter(simulator, canvas);
         MainFrame mainFrame = new MainFrame(canvas);
         presenter.runSimulation();
         mainFrame.setVisible(true);
