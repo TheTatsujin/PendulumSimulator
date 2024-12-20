@@ -20,7 +20,7 @@ public class Main {
 
         simulator.add(new Pendulum(
                 3,
-                new Rope(20, 20, 100),
+                new Rope(0, 0, 100),
                 0,
                 0,
                 50.8,

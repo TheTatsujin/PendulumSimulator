@@ -48,29 +48,35 @@ public class PendulumPresenter {
 
     private void dragEvent(int x, int y) {
         if (draggingID == 0) return;
-
         canvas.removeCircle(draggingID);
+        simulator.remove(draggingID);
+
         draggedPendulum = adapter.movePendulumTo(draggedPendulum, x, y);
+        simulator.add(new Pendulum(
+                draggedPendulum.id(),
+                draggedPendulum.hangingCord(),
+                draggedPendulum.theta(),
+                0,
+                0,
+                draggedPendulum.radius()
+        ));
         canvas.addCircle(adapter.pendulumToCircle(draggedPendulum));
-        canvas.update();
+        //canvas.update();
     }
 
     private void releaseEvent(int x, int y) {
         if (draggingID == 0) return;
-
+        simulator.remove(draggingID);
         simulator.add(draggedPendulum);
         draggedPendulum = Pendulum.Null();
         draggingID = 0;
-        this.runSimulation();
     }
 
     private void pressEvent(int x, int y) {
         for (Pendulum pendulum : simulator) {
             if (isPressed(pendulum, x, y)){
-                timer.cancel();
                 draggedPendulum = pendulum;
                 draggingID = pendulum.id();
-                simulator.remove(pendulum);
             }
         }
     }

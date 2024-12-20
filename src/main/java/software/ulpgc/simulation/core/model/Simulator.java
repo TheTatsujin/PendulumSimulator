@@ -21,22 +21,17 @@ public class Simulator implements Iterable<Pendulum>{
     }
 
     public void nextFrame() {
-        pendulums = pendulums.stream()
-                .map(this::nextState)
-                .collect(Collectors.toList());
+        synchronized (pendulums) {
+            pendulums = pendulums.stream()
+                    .map(this::nextState)
+                    .collect(Collectors.toList());
+        }
     }
 
-
-
-    public Pendulum getPendulum(int id) {
-      return pendulums.stream()
-              .filter(p -> p.id() == id)
-              .findFirst()
-              .orElse(Pendulum.Null());
-    };
-
-    public void remove(Pendulum target) {
-        pendulums.remove(target);
+    public void remove(int id) {
+        synchronized (pendulums) {
+            pendulums.removeIf(p -> p.id() == id);
+        }
     }
 
     private Pendulum nextState(Pendulum pendulum) {
