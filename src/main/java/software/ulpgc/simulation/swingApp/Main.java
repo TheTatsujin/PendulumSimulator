@@ -5,6 +5,8 @@ import software.ulpgc.simulation.core.model.Pendulum;
 import software.ulpgc.simulation.core.model.Rope;
 import software.ulpgc.simulation.core.model.Simulator;
 
+import java.awt.*;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -15,7 +17,8 @@ public class Main {
                 0,
                 0,
                 50.8,
-                85
+                85,
+                Color.PINK
         ));
 
         simulator.add(new Pendulum(
@@ -24,7 +27,8 @@ public class Main {
                 0,
                 0,
                 50.8,
-                80
+                80,
+                Color.lightGray
         ));
 
         SwingCanvas canvas = new SwingCanvas();

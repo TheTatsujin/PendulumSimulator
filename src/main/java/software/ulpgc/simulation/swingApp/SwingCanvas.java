@@ -16,8 +16,7 @@ public class SwingCanvas extends JPanel implements Canvas {
     private Drag drag = Drag.Null;
     private Release release = Release.Null;
     private Press press = Press.Null;
-    private int initialOffsetX;
-    private int initialOffsetY;
+
 
     public SwingCanvas() {
         this.addMouseListener(mouseListener());
@@ -120,16 +119,14 @@ public class SwingCanvas extends JPanel implements Canvas {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                initialOffsetX = e.getX();
-                initialOffsetY = e.getY();
-                press.offset(initialOffsetX, initialOffsetY);
+                press.offset(e.getX(), e.getY());
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 release.offset(
-                        e.getX() - initialOffsetX,
-                        e.getY() - initialOffsetY
+                        e.getX(),
+                        e.getY()
                 );
             }
 
@@ -150,8 +147,8 @@ public class SwingCanvas extends JPanel implements Canvas {
             @Override
             public void mouseDragged(MouseEvent e) {
                 drag.offset(
-                        e.getX() - initialOffsetX,
-                        e.getY() - initialOffsetY
+                        e.getX(),
+                        e.getY()
                 );
             }
 

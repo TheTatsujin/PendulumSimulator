@@ -12,7 +12,6 @@ public class PendulumPresenter {
     private final CanvasAdapter adapter;
     private final Simulator simulator;
     private final Canvas canvas;
-    private Timer timer;
     private Pendulum draggedPendulum = Pendulum.Null();
     private int draggingID = 0;
 
@@ -28,7 +27,7 @@ public class PendulumPresenter {
 
 
     public void runSimulation() {
-        this.timer = new Timer();
+        Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -41,7 +40,7 @@ public class PendulumPresenter {
     }
 
     public void addCircles(){
-        for (Pendulum pendulum : simulator) {
+        for (Pendulum pendulum : simulator.pendulums()) {
             canvas.addCircle(adapter.pendulumToCircle(pendulum));
         }
     }
@@ -49,19 +48,8 @@ public class PendulumPresenter {
     private void dragEvent(int x, int y) {
         if (draggingID == 0) return;
         canvas.removeCircle(draggingID);
-        simulator.remove(draggingID);
-
-        draggedPendulum = adapter.movePendulumTo(draggedPendulum, x, y);
-        simulator.add(new Pendulum(
-                draggedPendulum.id(),
-                draggedPendulum.hangingCord(),
-                draggedPendulum.theta(),
-                0,
-                0,
-                draggedPendulum.radius()
-        ));
+        grabPendulum(draggedPendulum, x, y);
         canvas.addCircle(adapter.pendulumToCircle(draggedPendulum));
-        //canvas.update();
     }
 
     private void releaseEvent(int x, int y) {
@@ -73,10 +61,12 @@ public class PendulumPresenter {
     }
 
     private void pressEvent(int x, int y) {
-        for (Pendulum pendulum : simulator) {
+
+        for (Pendulum pendulum : simulator.pendulums()) {
             if (isPressed(pendulum, x, y)){
                 draggedPendulum = pendulum;
                 draggingID = pendulum.id();
+                grabPendulum(pendulum, x, y);
             }
         }
     }
@@ -92,6 +82,20 @@ public class PendulumPresenter {
 
     private boolean isInsideHeight(Circle circle, int y) {
         return circle.y() + circle.radius() / 2 >= y && circle.y() - circle.radius() / 2 <= y;
+    }
+
+    private void grabPendulum(Pendulum pendulum, int x, int y) {
+        simulator.remove(pendulum.id());
+        draggedPendulum = adapter.movePendulumTo(pendulum, x, y);
+        simulator.add(new Pendulum(
+                draggedPendulum.id(),
+                draggedPendulum.hangingCord(),
+                draggedPendulum.theta(),
+                0,
+                0,
+                draggedPendulum.radius(),
+                pendulum.color()
+        ));
     }
 
 }

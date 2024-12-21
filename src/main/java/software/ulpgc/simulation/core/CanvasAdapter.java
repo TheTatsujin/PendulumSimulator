@@ -4,7 +4,6 @@ import software.ulpgc.simulation.core.model.Pendulum;
 import software.ulpgc.simulation.core.view.Circle;
 import software.ulpgc.simulation.core.view.Canvas;
 
-import java.awt.*;
 
 public class CanvasAdapter {
     private final Canvas canvas;
@@ -16,20 +15,28 @@ public class CanvasAdapter {
     public Circle pendulumToCircle(Pendulum pendulum) {
         return new Circle(
                 pendulum.id(),
-                adaptCoordinateX(calculateComponentX(pendulum), pendulum.radius()),
-                adaptCoordinateY(calculateComponentY(pendulum), pendulum.radius()),
+                coordinateToPixelX(calculateComponentX(pendulum), pendulum.radius()),
+                coordinateToPixelY(calculateComponentY(pendulum), pendulum.radius()),
                 pendulum.radius(),
-                Color.PINK,
-                adaptCoordinateX(pendulum.hangingCord().x(), 0),
-                adaptCoordinateY(pendulum.hangingCord().y(), 0)
+                pendulum.color(),
+                coordinateToPixelX(pendulum.hangingCord().x(), 0),
+                coordinateToPixelY(pendulum.hangingCord().y(), 0)
         );
     }
-    private int adaptCoordinateX(int x, int radius){
+    private int coordinateToPixelX(int x, int radius){
         return  (canvas.width() / 2) + x - radius / 4;
     }
 
-    private int adaptCoordinateY(int y, int radius){
-        return canvas.height() / 20 + y - radius / 4;
+    private int coordinateToPixelY(int y, int radius){
+        return (canvas.height() / 20) + y - radius / 4;
+    }
+
+    private int pixelToCoordinateX(int pixelX, int radius){
+        return pixelX - (canvas.width() / 2) + radius / 4;
+    }
+
+    private int pixelToCoordinateY(int pixelY, int radius){
+        return pixelY - (canvas.height() / 2) + radius / 4;
     }
 
     private int calculateComponentX(Pendulum pendulum) {
@@ -45,14 +52,19 @@ public class CanvasAdapter {
         return new Pendulum(
                 pendulum.id(),
                 pendulum.hangingCord(),
-                Math.atan2(x, y),
+                findTheta(x, y, pendulum.radius()),
                 0,
                 pendulum.g(),
-                pendulum.radius()
+                pendulum.radius(),
+                pendulum.color()
         );
     }
 
-
-
+    private double findTheta(int x, int y, int radius) {
+        return Math.atan2(
+                pixelToCoordinateX(x, radius),
+                pixelToCoordinateY(y, radius)
+        );
+    }
 
 }
