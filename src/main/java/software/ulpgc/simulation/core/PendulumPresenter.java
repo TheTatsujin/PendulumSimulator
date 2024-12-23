@@ -3,7 +3,6 @@ package software.ulpgc.simulation.core;
 import software.ulpgc.simulation.core.model.Pendulum;
 import software.ulpgc.simulation.core.model.Simulator;
 import software.ulpgc.simulation.core.view.Canvas;
-import software.ulpgc.simulation.core.view.Circle;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,9 +25,8 @@ public class PendulumPresenter {
     }
 
 
-    public void runSimulation() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+    public PendulumPresenter runSimulation() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 canvas.clear();
@@ -37,18 +35,18 @@ public class PendulumPresenter {
                 canvas.update();
             }
         }, 0, (long) (Simulator.dt * 1000));
+        return this;
     }
 
     public void addCircles(){
-        for (Pendulum pendulum : simulator.pendulums()) {
+        for (Pendulum pendulum : simulator.pendulums())
             canvas.addCircle(adapter.pendulumToCircle(pendulum));
-        }
     }
 
     private void dragEvent(int x, int y) {
         if (draggingID == 0) return;
         canvas.removeCircle(draggingID);
-        grabPendulum(draggedPendulum, x, y);
+        movePendulumTo(draggedPendulum, x, y);
         canvas.addCircle(adapter.pendulumToCircle(draggedPendulum));
     }
 
@@ -56,46 +54,28 @@ public class PendulumPresenter {
         if (draggingID == 0) return;
         simulator.remove(draggingID);
         simulator.add(draggedPendulum);
-        draggedPendulum = Pendulum.Null();
-        draggingID = 0;
+        updateDraggedPendulum(0, Pendulum.Null());
     }
 
     private void pressEvent(int x, int y) {
-
-        for (Pendulum pendulum : simulator.pendulums()) {
-            if (isPressed(pendulum, x, y)){
-                draggedPendulum = pendulum;
-                draggingID = pendulum.id();
-                grabPendulum(pendulum, x, y);
-            }
-        }
+        simulator.pendulums().stream()
+                .filter(p -> adapter.isPressed(p, x, y))
+                .forEach(p -> {
+                    updateDraggedPendulum(p.id(), p);
+                    movePendulumTo(p, x, y);
+                });
     }
 
-    private boolean isPressed(Pendulum pendulum, int x, int y) {
-        Circle circle = adapter.pendulumToCircle(pendulum);
-        return isInsideWidth(circle, x) && isInsideHeight(circle, y);
+    private void updateDraggedPendulum(int id, Pendulum pendulum) {
+        this.draggedPendulum = pendulum;
+        this.draggingID = id;
     }
 
-    private boolean isInsideWidth(Circle circle, int x) {
-        return circle.x() + circle.radius() / 2 >= x && circle.x() - circle.radius() / 2 <= x;
-    }
-
-    private boolean isInsideHeight(Circle circle, int y) {
-        return circle.y() + circle.radius() / 2 >= y && circle.y() - circle.radius() / 2 <= y;
-    }
-
-    private void grabPendulum(Pendulum pendulum, int x, int y) {
+    private void movePendulumTo(Pendulum pendulum, int x, int y) {
         simulator.remove(pendulum.id());
         draggedPendulum = adapter.movePendulumTo(pendulum, x, y);
-        simulator.add(new Pendulum(
-                draggedPendulum.id(),
-                draggedPendulum.hangingCord(),
-                draggedPendulum.theta(),
-                0,
-                0,
-                draggedPendulum.radius(),
-                pendulum.color()
-        ));
+        simulator.add(Simulator.immobile(draggedPendulum));
     }
+
 
 }

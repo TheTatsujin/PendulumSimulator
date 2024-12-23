@@ -7,35 +7,22 @@ import software.ulpgc.simulation.core.model.Simulator;
 
 import java.awt.*;
 
-
 public class Main {
     public static void main(String[] args) {
-        Simulator simulator = new Simulator();
-        simulator.add(new Pendulum(
-                2,
-                new Rope(0,0, 350),
-                0,
-                0,
-                50.8,
-                85,
-                Color.PINK
-        ));
-
-        simulator.add(new Pendulum(
-                3,
-                new Rope(0, 0, 100),
-                0,
-                0,
-                50.8,
-                80,
-                Color.lightGray
-        ));
+        Simulator simulator = new Simulator()
+                .add(getPendulum(2, 0, 0, 520, 50.8, 50, Color.CYAN))
+                .add(getPendulum(3, 0, 0, 100, 50.8, 50, Color.PINK));
 
         SwingCanvas canvas = new SwingCanvas();
+        /*
+        I'm forced to declare it as SwingCanvas, since the MainFrame
+        needs it to have paintComponent() method on the definition.
+        */
+        new MainFrame(canvas).setVisible(true);
+        new PendulumPresenter(simulator, canvas).runSimulation();
+    }
 
-        PendulumPresenter presenter = new PendulumPresenter(simulator, canvas);
-        MainFrame mainFrame = new MainFrame(canvas);
-        presenter.runSimulation();
-        mainFrame.setVisible(true);
+    public static Pendulum getPendulum(int id, int x, int y, int cordLength, double g, int r, Color color) {
+        return new Pendulum(id, new Rope(x, y, cordLength), 0, 0, g, r, color);
     }
 }

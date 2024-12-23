@@ -44,19 +44,17 @@ public class SwingCanvas extends JPanel implements Canvas {
     }
 
     @Override
-    public Canvas clear() {
+    public void clear() {
         synchronized (circleList) {
             this.circleList.clear();
         }
-        return this;
     }
 
     @Override
-    public Canvas removeCircle(int id) {
+    public void removeCircle(int id) {
         synchronized (circleList) {
             circleList.removeIf(circle -> circle.id() == id);
         }
-        return this;
     }
 
     @Override
@@ -146,10 +144,7 @@ public class SwingCanvas extends JPanel implements Canvas {
         return new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                drag.offset(
-                        e.getX(),
-                        e.getY()
-                );
+                drag.offset(e.getX(), e.getY());
             }
 
             @Override

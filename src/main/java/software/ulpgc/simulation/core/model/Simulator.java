@@ -9,6 +9,17 @@ public class Simulator{
     public static final double dt = 0.001;
     public static final double damping = 20;
 
+    public static Pendulum immobile(Pendulum pendulum) {
+        return new Pendulum(
+                pendulum.id(),
+                pendulum.hangingCord(),
+                pendulum.theta(),
+                0,
+                0,
+                pendulum.radius(),
+                pendulum.color()
+        );
+    }
 
     public Simulator() {
         this.pendulums = new ArrayList<>();

@@ -36,7 +36,7 @@ public class CanvasAdapter {
     }
 
     private int pixelToCoordinateY(int pixelY, int radius){
-        return pixelY - (canvas.height() / 2) + radius / 4;
+        return pixelY - (canvas.height() / 20) + radius / 4;
     }
 
     private int calculateComponentX(Pendulum pendulum) {
@@ -66,5 +66,20 @@ public class CanvasAdapter {
                 pixelToCoordinateY(y, radius)
         );
     }
+
+
+    public boolean isPressed(Pendulum pendulum, int x, int y) {
+        Circle circle = pendulumToCircle(pendulum);
+        return isInsideCircleWidth(circle, x) && isInsideCircleHeight(circle, y);
+    }
+
+    private boolean isInsideCircleWidth(Circle circle, int x) {
+        return circle.x() + circle.radius() / 2 >= x && circle.x() - circle.radius() / 2 <= x;
+    }
+
+    private boolean isInsideCircleHeight(Circle circle, int y) {
+        return circle.y() + circle.radius() / 2 >= y && circle.y() - circle.radius() / 2 <= y;
+    }
+
 
 }

@@ -2,8 +2,8 @@ package software.ulpgc.simulation.core.view;
 
 public interface Canvas {
     void addCircle(Circle circle);
-    Canvas clear();
-    Canvas removeCircle(int id);
+    void clear();
+    void removeCircle(int id);
     int width();
     int height();
     void update();
