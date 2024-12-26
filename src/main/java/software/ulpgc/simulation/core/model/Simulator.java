@@ -1,59 +1,24 @@
 package software.ulpgc.simulation.core.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Simulator{
-    private List<Pendulum> pendulums;
     public static final double dt = 0.001;
     public static final double damping = 20;
 
-    public static Pendulum immobile(Pendulum pendulum) {
-        return new Pendulum(
-                pendulum.id(),
-                pendulum.hangingCord(),
-                pendulum.theta(),
-                0,
-                0,
-                pendulum.radius(),
-                pendulum.color()
-        );
+    private Simulator() {}
+
+    public static Pendulum immobile(Pendulum p) {
+        return new Pendulum(p.id(), p.hangingCord(), p.theta(), 0, 0, p.radius(), p.color());
     }
 
-    public Simulator() {
-        this.pendulums = new ArrayList<>();
+    public static List<Pendulum> nextFrame(List<Pendulum> pendulums) {
+            return pendulums.stream().map(Simulator::nextState).collect(Collectors.toList());
     }
 
-    public Simulator add(Pendulum pendulum) {
-        synchronized (pendulums) {
-            this.pendulums.add(pendulum);
-        }
-        return this;
-    }
-
-    public void nextFrame() {
-        synchronized (pendulums) {
-            pendulums = pendulums.stream().map(this::nextState).collect(Collectors.toList());
-       }
-    }
-
-    public void remove(int id) {
-        synchronized (pendulums) {
-            pendulums.removeIf(p -> p.id() == id);
-        }
-    }
-
-    private Pendulum nextState(Pendulum pendulum) {
-        return new Pendulum(
-                pendulum.id(),
-                pendulum.hangingCord(),
-                nextTheta(pendulum),
-                nextAngularVelocity(pendulum),
-                pendulum.g(),
-                pendulum.radius(),
-                pendulum.color()
-        );
+    private static Pendulum nextState(Pendulum p) {
+        return new Pendulum(p.id(), p.hangingCord(), nextTheta(p), nextAngularVelocity(p), p.g(), p.radius(), p.color());
     }
 
     private static double nextTheta(Pendulum pendulum) {
@@ -68,7 +33,4 @@ public class Simulator{
         return -(pendulum.g() / pendulum.hangingCord().length()) * Math.sin(pendulum.theta());
     }
     
-    public List<Pendulum> pendulums() {
-        return new ArrayList<>(pendulums);
-    }
 }

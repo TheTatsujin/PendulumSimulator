@@ -4,20 +4,22 @@ import software.ulpgc.simulation.core.model.Pendulum;
 import software.ulpgc.simulation.core.model.Simulator;
 import software.ulpgc.simulation.core.view.Canvas;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class PendulumPresenter {
+    private List<Pendulum> pendulums;
     private final CanvasAdapter adapter;
-    private final Simulator simulator;
     private final Canvas canvas;
     private Pendulum draggedPendulum = Pendulum.Null();
     private int draggingID = 0;
 
 
-    public PendulumPresenter(Simulator simulator, Canvas canvas) {
+    public PendulumPresenter(Canvas canvas) {
+        pendulums = new ArrayList<>();
         this.adapter = new CanvasAdapter(canvas);
-        this.simulator = simulator;
         this.canvas = canvas;
         this.canvas.on((Canvas.Drag) this::dragEvent);
         this.canvas.on((Canvas.Press) this::pressEvent);
@@ -25,21 +27,20 @@ public class PendulumPresenter {
     }
 
 
-    public PendulumPresenter runSimulation() {
+    public void runSimulation() {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 canvas.clear();
-                simulator.nextFrame();
+                pendulums = Simulator.nextFrame(new ArrayList<>(pendulums));
                 addCircles();
                 canvas.update();
             }
         }, 0, (long) (Simulator.dt * 1000));
-        return this;
     }
 
     public void addCircles(){
-        for (Pendulum pendulum : simulator.pendulums())
+        for (Pendulum pendulum : pendulums)
             canvas.addCircle(adapter.pendulumToCircle(pendulum));
     }
 
@@ -52,18 +53,19 @@ public class PendulumPresenter {
 
     private void releaseEvent(int x, int y) {
         if (draggingID == 0) return;
-        simulator.remove(draggingID);
-        simulator.add(draggedPendulum);
-        updateDraggedPendulum(0, Pendulum.Null());
+        this.remove(draggingID);
+        this.add(draggedPendulum);
+        this.updateDraggedPendulum(0, Pendulum.Null());
     }
 
     private void pressEvent(int x, int y) {
-        simulator.pendulums().stream()
-                .filter(p -> adapter.isPressed(p, x, y))
-                .forEach(p -> {
-                    updateDraggedPendulum(p.id(), p);
-                    movePendulumTo(p, x, y);
-                });
+        for (Pendulum pendulum : pendulums){
+            if (adapter.isPressed(pendulum, x, y)) {
+                updateDraggedPendulum(pendulum.id(), pendulum);
+                movePendulumTo(pendulum, x, y);
+                break;
+            }
+        }
     }
 
     private void updateDraggedPendulum(int id, Pendulum pendulum) {
@@ -72,10 +74,17 @@ public class PendulumPresenter {
     }
 
     private void movePendulumTo(Pendulum pendulum, int x, int y) {
-        simulator.remove(pendulum.id());
+        this.remove(pendulum.id());
         draggedPendulum = adapter.movePendulumTo(pendulum, x, y);
-        simulator.add(Simulator.immobile(draggedPendulum));
+        this.add(Simulator.immobile(draggedPendulum));
     }
 
+    public PendulumPresenter add(Pendulum pendulum) {
+        pendulums.add(pendulum);
+        return this;
+    }
 
+    public void remove(int id) {
+        pendulums.removeIf(p -> p.id() == id);
+    }
 }
